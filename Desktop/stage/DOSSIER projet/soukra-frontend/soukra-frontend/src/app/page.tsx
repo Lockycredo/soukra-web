@@ -2,31 +2,76 @@
 
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-
-interface Category {
-  id: number;
-  name?: string;
-  nom_categorie?: string;
-}
+import { Product } from '@/types/product';
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import ProductCard from '@/components/ProductCard';
+import Footer from '@/components/Footer';
 
 export default function Home() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.get('/categories')
-      .then((res) => setCategories(res.data))
-      .catch((err) => console.error('Erreur Backend:', err));
+    api.get('/products')
+      .then((res) => {
+        setProducts(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Erreur de chargement des produits :', err);
+        setError('Impossible de récupérer la liste des produits.');
+        setLoading(false);
+      });
   }, []);
 
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold mb-4">SOUKRA - Test Connexion Backend</h1>
-      <h2 className="text-xl font-semibold text-gray-700">Catégories :</h2>
-      <ul className="list-disc ml-6 mt-2">
-        {categories.map((cat) => (
-          <li key={cat.id}>{cat.name || cat.nom_categorie}</li>
-        ))}
-      </ul>
-    </main>
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between">
+      <div>
+        <Navbar cartCount={0} />
+
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <Hero />
+
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Nos Produits</h2>
+              <span className="text-sm font-medium text-gray-500">
+                {products.length} produit{products.length > 1 ? 's' : ''} disponible{products.length > 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {loading && (
+              <div className="flex justify-center items-center py-24 text-blue-600 font-semibold text-lg">
+                Chargement des produits...
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-center font-medium">
+                {error}
+              </div>
+            )}
+
+            {!loading && !error && products.length === 0 && (
+              <div className="bg-white p-8 rounded-xl shadow-sm text-center text-gray-500">
+                Aucun produit disponible dans la base de données.
+              </div>
+            )}
+
+            {!loading && !error && products.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </section>
+        </main>
+      </div>
+
+      <Footer />
+    </div>
   );
 }
