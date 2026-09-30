@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { fetchProducts } from '@/lib/api'; // <--- Import corrigé ici
 import { Product } from '@/types/product';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -13,10 +13,13 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   useEffect(() => {
-    api.get('/products')
-      .then((res) => {
-        setProducts(res.data);
+    // <--- Utilisation de fetchProducts() ici
+    fetchProducts()
+      .then((data) => {
+        setProducts(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -26,19 +29,30 @@ export default function Home() {
       });
   }, []);
 
+  const filteredProducts = products.filter((product) =>
+    product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between">
       <div>
-        <Navbar cartCount={0} />
+        <Navbar 
+          cartCount={0} 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <Hero />
 
           <section className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Nos Produits</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {searchQuery ? `Résultats pour "${searchQuery}"` : 'Nos Produits'}
+              </h2>
               <span className="text-sm font-medium text-gray-500">
-                {products.length} produit{products.length > 1 ? 's' : ''} disponible{products.length > 1 ? 's' : ''}
+                {filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''} disponible{filteredProducts.length > 1 ? 's' : ''}
               </span>
             </div>
 
@@ -60,9 +74,15 @@ export default function Home() {
               </div>
             )}
 
-            {!loading && !error && products.length > 0 && (
+            {!loading && !error && products.length > 0 && filteredProducts.length === 0 && (
+              <div className="bg-white p-8 rounded-xl shadow-sm text-center text-gray-500">
+                Aucun produit ne correspond à votre recherche &quot;{searchQuery}&quot;.
+              </div>
+            )}
+
+            {!loading && !error && filteredProducts.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
