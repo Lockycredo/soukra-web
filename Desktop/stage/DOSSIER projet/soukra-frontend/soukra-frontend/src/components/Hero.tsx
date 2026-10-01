@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useState } from 'react';
@@ -18,7 +19,7 @@ export default function Hero({ onCategorySelect }: HeroProps) {
   };
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#0D1B2A] via-[#1A2A6C] to-[#5C2D91] text-white shadow-2xl mb-12">
+    <section className="relative w-full overflow-hidden rounded-3xl bg-linear-to-br from-[#0D1B2A] via-[#1A2A6C] to-[#5C2D91] text-white shadow-2xl mb-12">
       
       {/* Effets de lumière ambiante et lueurs cinématiques */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -107,7 +108,7 @@ export default function Hero({ onCategorySelect }: HeroProps) {
               />
               <button
                 type="button"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs px-5 py-2.5 rounded-lg shadow-lg transition-transform active:scale-95 shrink-0"
+                className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs px-5 py-2.5 rounded-lg shadow-lg transition-transform active:scale-95 shrink-0"
               >
                 Rechercher
               </button>
@@ -153,7 +154,7 @@ export default function Hero({ onCategorySelect }: HeroProps) {
         <div className="lg:col-span-5 relative flex justify-center items-center">
           
           {/* Card interactive 1 : Immobilier */}
-          <div className={`relative w-full h-[400px] rounded-2xl overflow-hidden border border-white/20 shadow-2xl transition-all duration-500 transform ${
+          <div className={`relative w-full h-100 rounded-2xl overflow-hidden border border-white/20 shadow-2xl transition-all duration-500 transform ${
             activeTab === 'immo' ? 'scale-105 z-20 ring-4 ring-purple-500/50' : 'opacity-90 hover:scale-102'
           }`}>
             <img
@@ -161,7 +162,7 @@ export default function Hero({ onCategorySelect }: HeroProps) {
               alt="Immobilier SOUKRA"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
             
             {/* Floating Overlay Badge Auto/Biens */}
             <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 p-2.5 rounded-xl text-xs font-bold text-white shadow-lg flex items-center gap-2">
